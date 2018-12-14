@@ -1,0 +1,113 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+
+    <style type="text/css">
+        #map {
+            width: 100%;
+            height: 100vh;
+            background-color: #eee;
+        }
+        #cities {
+            height: 100vh;
+            overflow: scroll;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <ul class="list-group" id="cities">
+
+                    </ul>
+                </div>
+
+                <div class="col-lg-8 col-md-8 hidden-sm hidden-xs">
+                    <div id="map" class="sticky-top"> 
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var cities = [{"name":"Nnewi, Anambra, Nigeria\t","lat":6.010519,"lng":6.910345},{"name":"Agbor, Ika South, Nigeria\t","lat":6.264092,"lng":6.201883},{"name":"Ikeja, Nigeria\t","lat":6.605874,"lng":3.349149},{"name":"Ughelli, Nigeria\t","lat":5.500187,"lng":5.993834},{"name":"Akure, Nigeria\t","lat":7.250771,"lng":5.210266},{"name":"Calabar, Nigeria\t","lat":4.982873,"lng":8.334503},{"name":"Sapele, Delta, Nigeria\t","lat":5.879698,"lng":5.700531},{"name":"Eruwa, Oyo, Nigeria\t","lat":7.536318,"lng":3.418143},{"name":"Wudil, Nigeria\t","lat":11.794242,"lng":8.839032},{"name":"Onitsha, Nigeria\t","lat":6.141312,"lng":6.802949},{"name":"Zaria, Nigeria\t","lat":11.085541,"lng":7.719945},{"name":"Jos, Nigeria\t","lat":9.896527,"lng":8.858331},{"name":"Kaduna, Nigeria\t","lat":10.609319,"lng":7.429504},{"name":"Minna, Minna state, Nigeria\t","lat":9.583555,"lng":6.546316},{"name":"Sokoto, Nigeria\t","lat":13.005873,"lng":5.247552},{"name":"Iwo, Osun, Nigeria\t","lat":7.629209,"lng":4.187218},{"name":"Yola, Nigeria\t","lat":9.203496,"lng":12.49539},{"name":"Des Moines, Iowa, USA\t","lat":41.619549,"lng":-93.598022},{"name":"Benin City, Nigeria\t","lat":6.339185,"lng":5.617447},{"name":"Ondo, Nigeria\t","lat":7.100005,"lng":4.841694},{"name":"Warri, Delta, Nigeria\t","lat":5.54423,"lng":5.760269},{"name":"Jos, Middle Belt, Nigeria\t","lat":9.890224,"lng":8.878927},{"name":"Enugu, Enugu, Nigeria\t","lat":6.459964,"lng":7.548949},{"name":"Ikorodu, Nigeria\t","lat":6.616865,"lng":3.508072},{"name":"Owerri, Imo, Nigeria\t","lat":5.47631,"lng":7.025853},{"name":"Bauchi, Nigeria\t","lat":10.314159,"lng":9.846282},{"name":"Bida, Nigeria\t","lat":9.083333,"lng":6.016667},{"name":"Ado Ekiti, Nigeria\t","lat":7.621111,"lng":5.221389},{"name":"Gombe, Nigeria\t","lat":10.283333,"lng":11.166667},{"name":"Sapele, Nigeria\t","lat":5.9,"lng":5.666667},{"name":"Ofin, Nigeria\t","lat":6.54456,"lng":3.514938},{"name":"Ilorin, Nigeria\t","lat":8.5,"lng":4.55},{"name":"Uwheru, Nigeria\t","lat":5.307031,"lng":6.056213},{"name":"Birnin Kebbi, Nigeria\t","lat":12.466078,"lng":4.199524},{"name":"Burji, Nigeria\t","lat":11.171179,"lng":8.548755},{"name":"Surulere, Lagos, Nigeria\t","lat":6.5,"lng":3.35},{"name":"Uyo, Nigeria\t","lat":5.038963,"lng":7.90947},{"name":"Abuja, Nigeria\t","lat":9.072264,"lng":7.491302},{"name":"Kaura Namoda, Nigeria\t","lat":12.6,"lng":6.589722},{"name":"Ogbomosho, Nigeria\t","lat":8.142165,"lng":4.245186},{"name":"Eti-Osa, Nigeria\t","lat":6.458985,"lng":3.601521},{"name":"Lagos, Nigeria\t","lat":6.465422,"lng":3.406448},{"name":"Awka, Nigeria\t","lat":6.210528,"lng":7.072277},{"name":"Ibadan, Nigeria\t","lat":7.401962,"lng":3.917313}];
+        
+        $(document).ready(() => {
+            const defaultLatLng = { lat: -34.397, lng: 150.644 };
+            let map = null;
+            const citiesUl = document.getElementById("cities");
+            let mapLoaded = false;
+
+            const removeAciveExceptIndex = (elIndex) => {
+                $(".list-group-item").each((i, e) => {
+                    if (i !== elIndex) {
+                        $(e).removeClass("active");
+                    } else {
+                        $(e).addClass("active");
+                    }
+                });
+            }
+
+            const showCity = (e) => {
+                const elIndex = Number(e.target.className.split(" ")[1].split("-")[2]);
+                const city = cities[elIndex];
+                removeAciveExceptIndex(elIndex);
+                
+                if (mapLoaded === false) {
+                    defaultLatLng.lat = city.lat;
+                    defaultLatLng.lng = city.lng;
+                    loadMap();
+                } else {
+                    var latLng = new google.maps.LatLng(city.lat, city.lng);
+                    map.panTo(latLng);
+                }
+            }
+
+            cities.forEach((city, i) => {
+                const li = document.createElement("li");
+                li.className = `list-group-item city-id-${i}`;
+                li.textContent = city.name;
+                li.onclick = showCity;
+                citiesUl.appendChild(li);
+            });
+
+            const loadMap = () => {
+                const API_KEY = "AIzaSyAKSlL48Z_lebxlkBiBiaGjpUsxzsyNGJo";
+                const mapScript = document.createElement("script");
+                mapScript.setAttribute("src", `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=mapLoaded`);
+                document.getElementsByTagName("head")[0].appendChild(mapScript);
+                mapLoaded = true;
+            }
+
+            window.mapLoaded = () => {
+                const { lat, lng } = defaultLatLng;
+
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat, lng },
+                    zoom: 11
+                });
+            }
+        });
+    </script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAD4Oqx2Y1-8lUehcjlH4LsTwNFg3JyIWA&callback=mapLoaded"
+        async defer></script> -->
+</body>
+
+</html>
